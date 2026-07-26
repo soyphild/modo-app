@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#080B11" />
+  <meta name="description" content="MODO convierte tus patrones cotidianos en decisiones simples y planes personales." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="MODO" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="assets/icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>MODO</title>
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar" id="topbar">
+      <button class="brand-button" data-view-go="today" aria-label="Ir a Hoy">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <span class="brand-copy"><strong>MODO</strong><small>Inteligencia personal</small></span>
+      </button>
+      <button id="quickAddTop" class="round-action" aria-label="Registro rápido">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </header>
+
+    <main id="main" class="main" aria-live="polite"></main>
+
+    <nav id="bottomNav" class="bottom-nav" aria-label="Navegación principal">
+      <button class="nav-item active" data-view="today" aria-label="Hoy">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.8 12 3.7l8.5 7.1v8.5a1.7 1.7 0 0 1-1.7 1.7H5.2a1.7 1.7 0 0 1-1.7-1.7z"/><path d="M9 21v-6h6v6"/></svg><small>Hoy</small>
+      </button>
+      <button class="nav-item" data-view="log" aria-label="Registrar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><small>Registrar</small>
+      </button>
+      <button class="nav-item" data-view="progress" aria-label="Progreso">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-7M22 19V3"/></svg><small>Progreso</small>
+      </button>
+      <button class="nav-item" data-view="plan" aria-label="Plan">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a2 2 0 0 1 2 2v16l-7-4-7 4V5a2 2 0 0 1 2-2z"/></svg><small>Plan</small>
+      </button>
+      <button class="nav-item" data-view="profile" aria-label="Perfil">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg><small>Perfil</small>
+      </button>
+    </nav>
+  </div>
+
+  <dialog id="modal" class="modal">
+    <form method="dialog" class="modal-card" id="modalCard"></form>
+  </dialog>
+
+  <div id="toastRegion" class="toast-region" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
