@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0A0907">
+  <title>Rifa</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+  <div id="navSlot"></div>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow" id="heroEyebrow">Rifa oficial</span>
+          <h1 class="display h-xl" id="heroTitle"><span class="skeleton" style="display:inline-block;width:80%;height:.9em"></span></h1>
+          <p class="lead" id="heroSubtitle"></p>
+          <div class="price-tag"><strong id="heroPrice" class="tabular">—</strong><span>por número</span></div>
+          <div class="countdown" id="countdown" hidden aria-label="Tiempo para el sorteo">
+            <div><b data-cd="d">00</b><small>Días</small></div>
+            <div><b data-cd="h">00</b><small>Horas</small></div>
+            <div><b data-cd="m">00</b><small>Min</small></div>
+            <div><b data-cd="s">00</b><small>Seg</small></div>
+          </div>
+          <div class="progress">
+            <div class="progress-head"><span><b id="soldCount" class="tabular">0</b> de <span id="totalCount" class="tabular">0</span> vendidos</span><span id="percent" class="tabular">0%</span></div>
+            <div class="bar"><i id="progressBar"></i></div>
+          </div>
+          <div class="hero-actions">
+            <a href="#numeros" class="btn btn-gold btn-lg">Elegir mis números <span data-icon="arrow"></span></a>
+            <span class="pill"><span class="dot live"></span><span id="availableLabel">Disponibilidad en vivo</span></span>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="halo"></div>
+          <div class="frame" id="heroFrame"></div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Premios -->
+    <section class="section" id="premios">
+      <div class="container">
+        <div class="section-head reveal">
+          <div><span class="eyebrow">Premios</span><h2 class="display h-lg">Lo que puedes <span class="gold-text">ganar</span></h2></div>
+          <p id="drawInfo"></p>
+        </div>
+        <div class="prizes" id="prizes"></div>
+      </div>
+    </section>
+
+    <!-- Números -->
+    <section class="section" id="numeros" style="padding-top:0">
+      <div class="container">
+        <div class="section-head reveal">
+          <div><span class="eyebrow">Paso 1 · Elige</span><h2 class="display h-lg">Tus números de la <span class="gold-text">suerte</span></h2></div>
+          <p>Los números ocupados se bloquean al instante. Tu selección queda reservada mientras completas el pago.</p>
+        </div>
+        <div class="picker reveal">
+          <div class="toolbar">
+            <label class="search"><span class="sr-only">Buscar número</span><span data-icon="search"></span><input id="search" inputmode="numeric" autocomplete="off" placeholder="Buscar un número…"></label>
+            <div class="seg" role="group" aria-label="Filtro">
+              <button type="button" data-filter="all" aria-pressed="true">Todos</button>
+              <button type="button" data-filter="free" aria-pressed="false">Disponibles</button>
+            </div>
+            <div class="lucky">
+              <div class="qty"><button type="button" id="luckyMinus" aria-label="Menos">−</button><span id="luckyQty">1</span><button type="button" id="luckyPlus" aria-label="Más">+</button></div>
+              <button type="button" class="btn btn-sm" id="luckyBtn"><span data-icon="dice"></span>Al azar</button>
+            </div>
+          </div>
+          <div class="legend">
+            <span><i class="l-free"></i>Disponible</span>
+            <span><i class="l-sel"></i>Tu selección</span>
+            <span><i class="l-res"></i>En proceso de pago</span>
+            <span><i class="l-sold"></i>Vendido</span>
+          </div>
+          <div class="ranges" id="ranges" role="group" aria-label="Rangos de números" hidden></div>
+          <div class="grid" id="grid" role="group" aria-label="Números"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cómo funciona -->
+    <section class="section" style="padding-top:0">
+      <div class="container">
+        <div class="section-head reveal"><div><span class="eyebrow">Simple y seguro</span><h2 class="display h-md">Cómo participar</h2></div></div>
+        <div class="steps">
+          <div class="step reveal"><h3>Elige tus números</h3><p>Selecciona los que quieras del tablero o deja que la suerte elija por ti.</p></div>
+          <div class="step reveal"><h3>Completa tus datos</h3><p>Nombre, RUT y correo. Tus números quedan reservados durante el pago.</p></div>
+          <div class="step reveal"><h3>Paga con Mercado Pago</h3><p>Tarjeta de crédito, débito o saldo Mercado Pago, con total seguridad.</p></div>
+          <div class="step reveal"><h3>Recibe tu comprobante</h3><p>Apenas se confirma el pago, te llega el comprobante con tus números al correo.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="bases" style="padding-top:0" hidden>
+      <div class="container">
+        <details class="terms reveal"><summary>Bases y condiciones <span data-icon="plus"></span></summary><div class="content" id="termsContent"></div></details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer"><div class="container"><div><strong data-brand></strong><div id="footerNote" style="margin-top:6px;max-width:52ch"></div></div><div id="footerContact"></div></div></footer>
+
+  <!-- Barra de selección -->
+  <div class="cartbar glass" id="cartbar" aria-live="polite">
+    <div class="info"><small id="cartCount">0 números</small><strong id="cartTotal">$0</strong><div class="chips" id="cartChips"></div></div>
+    <button type="button" class="btn btn-ghost btn-sm" id="clearSel">Limpiar</button>
+    <button type="button" class="btn btn-gold" id="continueBtn">Continuar <span data-icon="arrow"></span></button>
+  </div>
+
+  <!-- Checkout -->
+  <dialog class="sheet" id="checkout" aria-labelledby="checkoutTitle">
+    <div class="sheet-wrap">
+      <form class="sheet-card" id="checkoutForm" novalidate>
+        <div class="sheet-head"><div><span class="eyebrow">Paso 2 · Tus datos</span><h2 id="checkoutTitle">Confirma tu compra</h2></div><button type="button" class="icon-btn" data-close aria-label="Cerrar"><span data-icon="close"></span></button></div>
+        <div class="sheet-body">
+          <div class="summary">
+            <div class="muted" style="font-size:13px;font-weight:700">Números seleccionados</div>
+            <div class="chips-wrap" id="sumChips"></div>
+            <div class="summary-row"><span id="sumQty"></span><span id="sumUnit"></span></div>
+            <div class="summary-row total"><span>Total</span><span id="sumTotal" class="tabular"></span></div>
+          </div>
+          <div class="form-grid">
+            <div class="field"><label for="f_first">Nombre</label><input id="f_first" name="first_name" autocomplete="given-name" required><span class="err"></span></div>
+            <div class="field"><label for="f_last">Apellido</label><input id="f_last" name="last_name" autocomplete="family-name" required><span class="err"></span></div>
+            <div class="field"><label for="f_rut">RUT</label><input id="f_rut" name="rut" inputmode="text" autocomplete="off" placeholder="12.345.678-9" maxlength="12" required><span class="err"></span></div>
+            <div class="field"><label for="f_phone">Teléfono <span class="opt">(opcional)</span></label><input id="f_phone" name="phone" type="tel" autocomplete="tel" placeholder="+56 9 1234 5678"><span class="err"></span></div>
+            <div class="field full"><label for="f_email">Correo electrónico</label><input id="f_email" name="email" type="email" autocomplete="email" placeholder="tu@correo.com" required><span class="hint">Aquí recibirás el comprobante con tus números.</span><span class="err"></span></div>
+            <div class="field full"><label for="f_email2">Confirma tu correo</label><input id="f_email2" name="email2" type="email" autocomplete="off" required><span class="err"></span></div>
+            <div class="field full"><label class="check"><input type="checkbox" name="accept_terms" id="f_terms"><span>Acepto las <a href="#bases" data-close>bases y condiciones</a> de la rifa y el uso de mis datos para gestionar mi participación.</span></label><span class="err"></span></div>
+          </div>
+          <div class="secure"><span data-icon="lock"></span><span>Pago procesado por <span class="mp-badge">Mercado Pago</span>. Tus números quedan reservados por <b id="resMinutes">15</b> minutos.</span></div>
+        </div>
+        <div class="sheet-foot"><button type="submit" class="btn btn-gold btn-lg btn-block" id="payBtn">Ir a pagar <span id="payTotal"></span></button></div>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="/assets/common.js"></script>
+  <script src="/assets/raffle.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "rifa-premium",
+  "version": "1.0.0",
+  "description": "Venta de números de rifa con Mercado Pago, comprobante por correo y panel de administración.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "better-sqlite3": "13.0.3",
+    "express": "5.3.0",
+    "nodemailer": "10.1.7"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=20.12"
+  }
+}
