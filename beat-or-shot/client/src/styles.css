@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --ink: #0b0b14;
+  --violet: #8b5cf6;
+  --cyan: #00d9ff;
+  --win: #19c86a;
+  --lose: #ff4057;
+  --tie: #ffc247;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  background: var(--ink);
+}
+
+body {
+  @apply font-sans text-white antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+/* Fondo de escenario: luces de festival */
+.stage-bg {
+  background:
+    radial-gradient(60% 40% at 15% 0%, rgba(139, 92, 246, 0.35), transparent 70%),
+    radial-gradient(50% 35% at 100% 15%, rgba(0, 217, 255, 0.22), transparent 70%),
+    radial-gradient(70% 40% at 50% 110%, rgba(139, 92, 246, 0.25), transparent 70%),
+    #0b0b14;
+}
+.stage-grid::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(80% 60% at 50% 30%, black, transparent);
+}
+
+.glass {
+  @apply rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-xl;
+}
+.glass-strong {
+  @apply rounded-3xl border border-white/10 bg-[#161625]/90 backdrop-blur-xl;
+}
+
+.text-gradient {
+  background: linear-gradient(100deg, #a78bfa 0%, #8b5cf6 35%, #00d9ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.btn-primary {
+  background: linear-gradient(100deg, #8b5cf6, #6d28d9 45%, #00b8d9);
+  box-shadow: 0 10px 40px -10px rgba(139, 92, 246, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.safe-top {
+  padding-top: max(env(safe-area-inset-top), 12px);
+}
+.safe-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom), 16px);
+}
+
+.perspective {
+  perspective: 1200px;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Barras de ecualizador */
+@keyframes eq {
+  0%, 100% { transform: scaleY(0.25); }
+  50% { transform: scaleY(1); }
+}
+.eq-bar {
+  transform-origin: bottom;
+  animation: eq 0.9s ease-in-out infinite;
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(255, 64, 87, 0.6); }
+  100% { box-shadow: 0 0 0 24px rgba(255, 64, 87, 0); }
+}
+.tension {
+  animation: pulse-ring 1s ease-out infinite;
+}
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+.spin-slow {
+  animation: spin-slow 6s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.18) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: shimmer 2.4s linear infinite;
+}
+
+input,
+select,
+textarea {
+  @apply rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white outline-none transition placeholder:text-white/35 focus:border-violet focus:bg-white/[0.07];
+}
+
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eq-bar, .spin-slow, .shimmer, .tension {
+    animation: none;
+  }
+}
+
+/* Impresión de cartas */
+@media print {
+  body { background: white; }
+  .no-print { display: none !important; }
+}

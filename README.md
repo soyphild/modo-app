@@ -1,5 +1,7 @@
 # MODO v1.1 Premium
 
+> Este repositorio también contiene **BEAT OR SHOT**, un juego de mesa musical multijugador, en la carpeta [`beat-or-shot/`](beat-or-shot/README.md). Es un proyecto independiente: no afecta a la publicación de MODO en GitHub Pages.
+
 Versión revisada a partir de las primeras pruebas de uso.
 
 ## Cambios principales

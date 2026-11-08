@@ -1,0 +1,11 @@
+{
+  "name": "BEAT OR SHOT",
+  "short_name": "BEAT OR SHOT",
+  "description": "El juego de mesa musical físico-digital",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B0B14",
+  "theme_color": "#0B0B14",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
