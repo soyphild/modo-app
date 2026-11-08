@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { BookOpen, Layers, LogIn, Plus, Settings, User } from 'lucide-react';
+import { BookOpen, Layers, LogIn, Music, Plus, Settings, User } from 'lucide-react';
 import type { View } from '../App';
 import { CardBack, CardFace } from '../components/cards';
 import { Btn, Logo, Screen } from '../components/ui';
@@ -50,7 +50,12 @@ export function Home({ go }: { go: (v: View) => void }) {
           <Plus size={20} /> Crear partida
         </Btn>
         {DEMO ? (
-          <p className="rounded-2xl bg-cyan/10 px-4 py-3 text-center text-xs text-cyan">Versión demo: juegas contra 3 bots (Luna, Rocco y Mara) en este celular. Sube el volumen 🔊</p>
+          <>
+            <a href="#panel" className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl border border-cyan/40 bg-cyan/10 text-lg font-semibold text-cyan active:scale-[0.97]">
+              <Music size={20} /> Panel de canciones
+            </a>
+            <p className="text-center text-xs text-white/50">Demo: juegas contra 3 bots (Luna, Rocco y Mara). Sube el volumen 🔊</p>
+          </>
         ) : (
           <Btn variant="ghost" onClick={() => go('join')}>
             <LogIn size={20} /> Unirse a partida

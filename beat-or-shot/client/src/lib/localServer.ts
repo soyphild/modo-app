@@ -7,7 +7,8 @@ import { buildEditionCards, type CardInstance } from '../../../shared/cards';
 import type { AudioPayload, ClientAction } from '../../../shared/types';
 import { GameError, Room, type AudioTokenRef } from '../../../server/game/engine';
 import { roomCode } from '../../../server/game/helpers';
-import { MemoryCatalog } from '../../../server/store/catalogCore';
+import { MemoryCatalog, isPlayable } from '../../../server/store/catalogCore';
+import type { TrackDef } from '../../../shared/catalog';
 
 type Cb = (...args: unknown[]) => void;
 
@@ -25,8 +26,30 @@ const BOTS = [
 
 export function localAudio(token: string): (AudioPayload & { clipSec: number }) | null {
   const ref = audioTokens.get(token);
-  if (!ref || ref.track.audio?.kind !== 'synth') return null;
-  return { kind: 'synth', variant: ref.variant, bpm: ref.track.audio.bpm, notes: ref.track.audio.notes, clipSec: ref.clipSec };
+  const a = ref?.track.audio;
+  if (!ref || !a) return null;
+  if (a.kind === 'file') return { kind: 'file', variant: ref.variant, url: a.url, clipStart: ref.clipStart, clipDuration: Math.min(a.clipDuration, ref.clipSec), clipSec: ref.clipSec };
+  return { kind: 'synth', variant: ref.variant, bpm: a.bpm, notes: a.notes, clipSec: ref.clipSec };
+}
+
+/** API del panel admin en la demo: las canciones subidas viven en memoria mientras la página esté abierta. */
+export async function localApi(path: string, init: RequestInit = {}): Promise<Response> {
+  const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
+  const method = (init.method ?? 'GET').toUpperCase();
+  if (path === '/api/admin/tracks' && method === 'GET') return json(catalog.all().map((t) => ({ ...t, playable: isPlayable(t) })));
+  if (path === '/api/admin/upload' && method === 'POST') {
+    const body = init.body as Blob;
+    if (!body || !(body instanceof Blob) || body.size < 1000) return json({ error: 'Archivo vacío o dañado' }, 400);
+    return json({ url: URL.createObjectURL(body), bytes: body.size });
+  }
+  if (path.startsWith('/api/admin/tracks') && (method === 'POST' || method === 'PUT')) {
+    const t = JSON.parse(String(init.body)) as TrackDef & { playable?: boolean };
+    delete t.playable;
+    if (!t.id || !t.title || !t.artist) return json({ error: 'Faltan título, artista o id' }, 400);
+    catalog.upsert(t);
+    return json({ ...t, playable: isPlayable(t) });
+  }
+  return json({ error: 'No disponible en la demo' }, 404);
 }
 export const localExpansions = () => catalog.expansionViews();
 

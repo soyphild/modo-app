@@ -1,12 +1,15 @@
 import { useSyncExternalStore } from 'react';
 import { io, type Socket } from 'socket.io-client';
 import type { ClientAction, ExpansionView, RoomView } from '../../../shared/types';
-import { LocalSocket, localAudio, localExpansions } from './localServer';
+import { LocalSocket, localApi, localAudio, localExpansions } from './localServer';
 import { setAudioResolver } from './audio';
 
 /** VITE_DEMO=1: todo corre en el navegador con 3 bots (para enlaces de demostración). */
 export const DEMO = import.meta.env.VITE_DEMO === '1';
 if (DEMO) setAudioResolver(async (token) => localAudio(token));
+
+/** fetch para el panel admin: en la demo responde un servidor local en memoria. */
+export const apiFetch = (path: string, init?: RequestInit): Promise<Response> => (DEMO ? localApi(path, init) : fetch(path, init));
 
 export async function fetchExpansions(): Promise<ExpansionView[]> {
   if (DEMO) return localExpansions();

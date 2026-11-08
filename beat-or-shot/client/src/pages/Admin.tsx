@@ -2,6 +2,7 @@ import { AlertTriangle, CheckCircle2, Play, Plus, Printer, Search, Square, Uploa
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { TrackDef } from '../../../shared/catalog';
 import { Btn, Logo, Pill, Sheet, cx } from '../components/ui';
+import { DEMO, apiFetch } from '../lib/game';
 
 type Row = TrackDef & { playable: boolean };
 const KEY = 'bos.adminKey';
@@ -27,7 +28,7 @@ function blank(): TrackDef {
 }
 
 export default function AdminPage() {
-  const [key, setKey] = useState(() => sessionStorage.getItem(KEY) ?? '');
+  const [key, setKey] = useState(() => (DEMO ? 'demo' : sessionStorage.getItem(KEY) ?? ''));
   const [rows, setRows] = useState<Row[] | null>(null);
   const [err, setErr] = useState('');
   const [q, setQ] = useState('');
@@ -37,7 +38,7 @@ export default function AdminPage() {
 
   async function load(k = key) {
     setErr('');
-    const res = await fetch('/api/admin/tracks', { headers: { 'x-admin-key': k } });
+    const res = await apiFetch('/api/admin/tracks', { headers: { 'x-admin-key': k } });
     if (!res.ok) {
       setRows(null);
       return setErr(res.status === 401 ? 'Clave incorrecta' : 'Error al cargar');
@@ -51,7 +52,8 @@ export default function AdminPage() {
 
   const list = useMemo(() => {
     const n = q.toLowerCase();
-    return (rows ?? []).filter((r) => (filter === 'all' || (filter === 'playable' ? r.playable : !r.playable)) && (!n || `${r.title} ${r.artist} ${r.genre} ${r.expansion}`.toLowerCase().includes(n)));
+    const mine = (r: Row) => (r.expansion === 'mis-canciones' ? 0 : 1);
+    return (rows ?? []).slice().sort((a, b) => mine(a) - mine(b)).filter((r) => (filter === 'all' || (filter === 'playable' ? r.playable : !r.playable)) && (!n || `${r.title} ${r.artist} ${r.genre} ${r.expansion}`.toLowerCase().includes(n)));
   }, [rows, q, filter]);
 
   if (!rows)
@@ -81,9 +83,12 @@ export default function AdminPage() {
           <Logo size="sm" />
           <span className="text-white/40">/ admin</span>
           <div className="ml-auto flex gap-2">
-            <a href="/print" target="_blank" className="inline-flex h-9 items-center gap-1 rounded-xl bg-white/10 px-3 text-sm">
-              <Printer size={14} /> Hojas de impresión
+            <a href={DEMO ? '#' : '/'} className="inline-flex h-9 items-center gap-1 rounded-xl bg-white/10 px-3 text-sm">
+              ← Volver al juego
             </a>
+            {!DEMO && <a href="/print" target="_blank" className="inline-flex h-9 items-center gap-1 rounded-xl bg-white/10 px-3 text-sm">
+              <Printer size={14} /> Hojas de impresión
+            </a>}
             <Btn size="sm" onClick={() => setUploading(true)}>
               <Upload size={14} /> Subir canción
             </Btn>
@@ -93,10 +98,10 @@ export default function AdminPage() {
           </div>
         </header>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
-          <div className="glass p-4"><div className="text-xs text-white/50">Canciones</div><div className="font-display text-2xl font-black">{rows.length}</div></div>
-          <div className="glass p-4"><div className="text-xs text-white/50">Jugables (audio autorizado)</div><div className="font-display text-2xl font-black text-win">{playable}</div></div>
-          <div className="glass p-4"><div className="text-xs text-white/50">Pendientes de licencia</div><div className="font-display text-2xl font-black text-tie">{rows.length - playable}</div></div>
+        <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
+          <div className="glass p-3"><div className="text-[11px] text-white/50">Canciones</div><div className="font-display text-xl font-black">{rows.length}</div></div>
+          <div className="glass p-3"><div className="text-[11px] text-white/50">Jugables</div><div className="font-display text-xl font-black text-win">{playable}</div></div>
+          <div className="glass p-3"><div className="text-[11px] text-white/50">Sin audio</div><div className="font-display text-xl font-black text-tie">{rows.length - playable}</div></div>
         </div>
 
         <div className="mt-4 rounded-2xl border border-tie/30 bg-tie/10 p-4 text-sm text-tie">
@@ -164,7 +169,7 @@ export default function AdminPage() {
             initial={edit.t}
             isNew={edit.isNew}
             onSave={async (t) => {
-              const res = await fetch(edit.isNew ? '/api/admin/tracks' : `/api/admin/tracks/${t.id}`, {
+              const res = await apiFetch(edit.isNew ? '/api/admin/tracks' : `/api/admin/tracks/${t.id}`, {
                 method: edit.isNew ? 'POST' : 'PUT',
                 headers: { 'content-type': 'application/json', 'x-admin-key': key },
                 body: JSON.stringify(t)
@@ -368,7 +373,7 @@ function UploadForm({ adminKey, onDone }: { adminKey: string; onDone: () => void
     if (!ready || !file) return;
     setErr('');
     setBusy('Subiendo archivo…');
-    const up = await fetch('/api/admin/upload', { method: 'POST', headers: { 'content-type': file.type || 'audio/mpeg', 'x-admin-key': adminKey }, body: file });
+    const up = await apiFetch('/api/admin/upload', { method: 'POST', headers: { 'content-type': file.type || 'audio/mpeg', 'x-admin-key': adminKey }, body: file });
     const upBody = await up.json().catch(() => ({}));
     if (!up.ok) {
       setBusy('');
@@ -392,7 +397,7 @@ function UploadForm({ adminKey, onDone }: { adminKey: string; onDone: () => void
       rights: { status: 'private_use', note: 'Subida desde el panel.' },
       active: true
     };
-    const res = await fetch('/api/admin/tracks', { method: 'POST', headers: { 'content-type': 'application/json', 'x-admin-key': adminKey }, body: JSON.stringify(track) });
+    const res = await apiFetch('/api/admin/tracks', { method: 'POST', headers: { 'content-type': 'application/json', 'x-admin-key': adminKey }, body: JSON.stringify(track) });
     const body = await res.json().catch(() => ({}));
     setBusy('');
     if (!res.ok) return setErr(body.error ?? 'No se pudo guardar');

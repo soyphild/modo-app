@@ -1,7 +1,7 @@
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Toasts } from './components/Toasts';
-import { act, toast, useGame } from './lib/game';
+import { DEMO, act, toast, useGame } from './lib/game';
 import { useSettings } from './lib/settings';
 import { ExpansionsScreen } from './screens/Expansions';
 import { GameScreen } from './screens/GameScreen';
@@ -27,7 +27,15 @@ export default function App() {
     document.documentElement.classList.toggle('reduce-motion', settings.reducedMotion);
   }, [settings.reducedMotion]);
 
-  if (path.startsWith('/admin'))
+  // En la demo, el panel de canciones vive en #panel (mismo enlace).
+  const [hash, setHash] = useState(() => window.location.hash);
+  useEffect(() => {
+    const on = () => setHash(window.location.hash);
+    window.addEventListener('hashchange', on);
+    return () => window.removeEventListener('hashchange', on);
+  }, []);
+
+  if (path.startsWith('/admin') || (DEMO && hash === '#panel'))
     return (
       <Suspense fallback={null}>
         <AdminPage />
