@@ -7,7 +7,8 @@ import type { TrackDef } from '../shared/catalog';
 import { AVATARS } from '../shared/config';
 import type { AudioPayload, ClientAction } from '../shared/types';
 import { GameError, Room, type AudioTokenRef } from './game/engine';
-import { cardCode, roomCode } from './game/helpers';
+import { cardCode } from './game/cardCode';
+import { roomCode } from './game/helpers';
 import { JsonCatalogStore, SPOTIFY_TRACK_RE, isPlayable } from './store/catalogStore';
 
 export interface AppOptions {

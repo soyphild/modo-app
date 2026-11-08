@@ -1,6 +1,19 @@
 import { useSyncExternalStore } from 'react';
 import { io, type Socket } from 'socket.io-client';
-import type { ClientAction, RoomView } from '../../../shared/types';
+import type { ClientAction, ExpansionView, RoomView } from '../../../shared/types';
+import { LocalSocket, localAudio, localExpansions } from './localServer';
+import { setAudioResolver } from './audio';
+
+/** VITE_DEMO=1: todo corre en el navegador con 3 bots (para enlaces de demostración). */
+export const DEMO = import.meta.env.VITE_DEMO === '1';
+if (DEMO) setAudioResolver(async (token) => localAudio(token));
+
+export async function fetchExpansions(): Promise<ExpansionView[]> {
+  if (DEMO) return localExpansions();
+  const r = await fetch('/api/expansions');
+  if (!r.ok) throw new Error('error');
+  return r.json();
+}
 
 /**
  * Conexión en tiempo real + sesión del jugador.
@@ -56,6 +69,7 @@ function readSession(): { code: string; token: string } | null {
   }
 }
 function writeSession(s: { code: string; token: string } | null) {
+  if (DEMO) return;
   try {
     if (s) localStorage.setItem(SESSION_KEY, JSON.stringify(s));
     else localStorage.removeItem(SESSION_KEY);
@@ -65,7 +79,7 @@ function writeSession(s: { code: string; token: string } | null) {
 }
 export const hasSession = () => !!readSession();
 
-const socket: Socket = io({ transports: ['websocket', 'polling'], reconnectionDelayMax: 4000 });
+const socket: Socket = DEMO ? (new LocalSocket() as unknown as Socket) : io({ transports: ['websocket', 'polling'], reconnectionDelayMax: 4000 });
 
 /** Sincroniza el reloj con el servidor (mínimo RTT de varias muestras). */
 async function syncClock() {

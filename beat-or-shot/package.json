@@ -2,7 +2,7 @@
   "name": "beat-or-shot",
   "version": "0.1.0",
   "private": true,
-  "description": "BEAT OR SHOT — juego de mesa musical físico-digital multijugador",
+  "description": "BEAT OR SHOT \u2014 juego de mesa musical f\u00edsico-digital multijugador",
   "type": "module",
   "scripts": {
     "dev": "concurrently -k -n server,client -c magenta,cyan \"npm:dev:server\" \"npm:dev:client\"",
@@ -11,7 +11,8 @@
     "build": "vite build",
     "start": "NODE_ENV=production tsx server/index.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "build:demo": "vite build -c vite.demo.config.ts"
   },
   "engines": {
     "node": ">=20"
@@ -44,6 +45,7 @@
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
     "vite": "^5.4.11",
+    "vite-plugin-singlefile": "^2.0.3",
     "vitest": "^2.1.8"
   }
 }

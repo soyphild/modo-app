@@ -5,7 +5,7 @@ import type { ClientAction } from '../../shared/types';
 import { JsonCatalogStore } from '../store/catalogStore';
 import { canonical, matches } from './answers';
 import { GameError, Room, type AudioTokenRef } from './engine';
-import { cardCode } from './helpers';
+import { cardCode } from './cardCode';
 
 const SECRET = 'test-secret';
 const editionCards = buildEditionCards('GEN1');

@@ -134,6 +134,15 @@ function drum(c: AudioContext, dest: AudioNode, t: number, kind: 'kick' | 'hat' 
   activeNodes.push(s);
 }
 
+type Resolver = (token: string) => Promise<(AudioPayload & { clipSec: number }) | null>;
+let resolveAudio: Resolver = async (token) => {
+  const res = await fetch(`/api/audio/${token}`, { cache: 'no-store' });
+  return res.ok ? res.json() : null;
+};
+export function setAudioResolver(fn: Resolver) {
+  resolveAudio = fn;
+}
+
 /** Reproduce el fragmento de la ronda a la hora indicada (reloj local en ms). */
 export async function playRoundAudio(token: string, startAtLocalMs: number): Promise<boolean> {
   const c = ensure();
@@ -141,9 +150,9 @@ export async function playRoundAudio(token: string, startAtLocalMs: number): Pro
   stopMusic();
   let payload: AudioPayload & { clipSec: number };
   try {
-    const res = await fetch(`/api/audio/${token}`, { cache: 'no-store' });
-    if (!res.ok) return false;
-    payload = await res.json();
+    const got = await resolveAudio(token);
+    if (!got) return false;
+    payload = got;
   } catch {
     return false;
   }

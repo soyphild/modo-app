@@ -1,15 +1,24 @@
-import crypto from 'node:crypto';
 import type { TrackDef } from '../../shared/catalog';
 import type { Hint } from '../../shared/types';
 
+const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+function randomBytes(n: number): Uint8Array {
+  const buf = new Uint8Array(n);
+  globalThis.crypto.getRandomValues(buf);
+  return buf;
+}
+
+/** Identificador aleatorio criptográficamente seguro (funciona en Node y en el navegador). */
 export function randomId(bytes = 8): string {
-  return crypto.randomBytes(bytes).toString('base64url');
+  let out = '';
+  for (const b of randomBytes(Math.ceil((bytes * 4) / 3))) out += B64[b & 63];
+  return out;
 }
 
 const ROOM_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 export function roomCode(): string {
   let out = '';
-  const buf = crypto.randomBytes(6);
+  const buf = randomBytes(6);
   for (let i = 0; i < 6; i++) out += ROOM_ALPHABET[buf[i] % ROOM_ALPHABET.length];
   return out;
 }
@@ -54,13 +63,4 @@ export function makeHint(track: TrackDef, kind: Hint['kind']): Hint {
       return { kind, label: 'Título', value: `Empieza por «${track.title[0].toUpperCase()}» · ${words} palabra${words > 1 ? 's' : ''}` };
     }
   }
-}
-
-/** Códigos de carta: HMAC del número de serie. Opacos, no contienen respuestas. */
-const CODE_ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
-export function cardCode(secret: string, edition: string, serial: number): string {
-  const h = crypto.createHmac('sha256', secret).update(`${edition}:${serial}`).digest();
-  let out = '';
-  for (let i = 0; i < 8; i++) out += CODE_ALPHABET[h[i] % 32];
-  return `${out.slice(0, 4)}-${out.slice(4)}`;
 }

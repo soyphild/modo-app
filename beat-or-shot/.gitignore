@@ -3,3 +3,4 @@ dist
 data/*.json
 !data/.gitkeep
 *.log
+dist-demo

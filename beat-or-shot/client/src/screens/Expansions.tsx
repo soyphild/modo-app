@@ -2,6 +2,7 @@ import { ArrowLeft, Check, Clock, Lock } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { ExpansionView } from '../../../shared/types';
 import { Pill, Screen, SectionTitle } from '../components/ui';
+import { fetchExpansions } from '../lib/game';
 
 export function ExpansionList({ list, selected, onToggle }: { list: ExpansionView[]; selected?: string[]; onToggle?: (id: string) => void }) {
   return (
@@ -49,8 +50,7 @@ export function ExpansionsScreen({ onBack }: { onBack: () => void }) {
   const [list, setList] = useState<ExpansionView[] | null>(null);
   const [err, setErr] = useState(false);
   useEffect(() => {
-    fetch('/api/expansions')
-      .then((r) => r.json())
+    fetchExpansions()
       .then(setList)
       .catch(() => setErr(true));
   }, []);

@@ -5,6 +5,7 @@ import { CardBack, CardFace } from '../components/cards';
 import { Btn, Logo, Screen } from '../components/ui';
 import { CHALLENGES, POWER_UPS, TRACK_CARD } from '../../../shared/cards';
 import { useSettings } from '../lib/settings';
+import { DEMO } from '../lib/game';
 
 export function Home({ go }: { go: (v: View) => void }) {
   const s = useSettings();
@@ -48,9 +49,13 @@ export function Home({ go }: { go: (v: View) => void }) {
         <Btn onClick={() => go('create')}>
           <Plus size={20} /> Crear partida
         </Btn>
-        <Btn variant="ghost" onClick={() => go('join')}>
-          <LogIn size={20} /> Unirse a partida
-        </Btn>
+        {DEMO ? (
+          <p className="rounded-2xl bg-cyan/10 px-4 py-3 text-center text-xs text-cyan">Versión demo: juegas contra 3 bots (Luna, Rocco y Mara) en este celular. Sube el volumen 🔊</p>
+        ) : (
+          <Btn variant="ghost" onClick={() => go('join')}>
+            <LogIn size={20} /> Unirse a partida
+          </Btn>
+        )}
         <div className="grid grid-cols-4 gap-2 pt-1">
           {[
             { v: 'howto' as View, icon: BookOpen, label: 'Cómo jugar' },

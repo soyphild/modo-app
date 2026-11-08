@@ -18,7 +18,7 @@ import type {
   TrackRoundView,
   WildcardType
 } from '../../shared/types';
-import type { CatalogRepository } from '../store/catalogStore';
+import type { CatalogRepository } from '../store/catalogCore';
 import { matches, yearMatches } from './answers';
 import { HINT_ORDER, eraLabel, makeHint, pick, randomId, shuffle } from './helpers';
 

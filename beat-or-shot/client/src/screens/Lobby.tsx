@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { DIFFICULTY } from '../../../shared/config';
 import type { RoomView } from '../../../shared/types';
 import { Avatar, Btn, Logo, Pill, Screen, Sheet, cx } from '../components/ui';
-import { act, leaveRoom, me, player, toast } from '../lib/game';
+import { DEMO, act, leaveRoom, me, player, toast } from '../lib/game';
 import { SetupSteps } from './Setup';
 
 function useQr(text: string) {
@@ -50,6 +50,9 @@ export function Lobby({ room }: { room: RoomView }) {
 
       {!partners ? (
         <>
+          {DEMO ? (
+            <div className="glass p-4 text-sm text-white/70">🤖 <b>Modo demo.</b> Luna, Rocco y Mara ya están en tu sala. En la versión real, tus amigos entran aquí con el código o el QR desde su celular.</div>
+          ) : (
           <div className="glass flex items-center gap-4 p-4">
             <div className="h-[120px] w-[120px] shrink-0 overflow-hidden rounded-2xl bg-white p-1.5" dangerouslySetInnerHTML={{ __html: qr }} aria-label="QR para unirse" />
             <div className="min-w-0">
@@ -62,6 +65,7 @@ export function Lobby({ room }: { room: RoomView }) {
               </div>
             </div>
           </div>
+          )}
 
           <div className="mt-4 flex flex-wrap gap-2">
             <Pill color={c.familyMode ? '#00D9FF' : c.modality === 'fiesta' ? '#F472B6' : '#8B5CF6'}>{c.familyMode ? '🛡️ Familiar' : c.modality === 'fiesta' ? '🎉 Fiesta' : '⚔️ Clásico'}</Pill>
