@@ -43,6 +43,16 @@ Notas del catálogo demo:
 - "Bella ciao": melodía tradicional; se evita cualquier arreglo moderno. Verificar por territorio.
 - Nuestras interpretaciones sintetizadas son grabaciones nuevas propias, no copias de grabaciones existentes.
 
+### Canciones subidas por el dueño ("Mis canciones")
+
+El anfitrión puede subir sus propios archivos desde `/admin`. Se guardan con `rights.status = private_use`,
+son jugables y se muestran como "Uso privado". Es el equivalente a poner tu música en una reunión privada;
+**no autoriza** a vender el juego con esas canciones ni a abrir el servidor al público. Para la versión
+comercial esas canciones deben pasar a `licensed` con su titular y número de licencia.
+
+YouTube tampoco es una vía válida: sus políticas exigen que el reproductor sea visible y prohíben separar
+el audio del video, y la pantalla delataría la respuesta.
+
 ## 4. Registro de riesgos
 
 | Riesgo | Tipo | Prob. | Impacto | Mitigación |

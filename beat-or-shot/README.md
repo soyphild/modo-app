@@ -47,6 +47,16 @@ La cámara (escáner QR) y el audio en iPhone requieren **HTTPS**.
 - Audio legalmente limpio para pruebas: obras de dominio público interpretadas por un sintetizador propio.
   La Edición General (éxitos comerciales) está cargada como metadatos **sin audio** hasta tener licencias.
 
+## Música real: subir tus canciones
+
+1. Entra en `/admin` → **Subir canción** → elige un MP3/M4A/WAV (si se llama `Artista - Título.mp3`, los campos se rellenan solos).
+2. Completa año, género y país (se usan para las pistas) y elige cómo se escoge el fragmento:
+   **🎲 al azar en cada partida** o **🎯 desde el estribillo** (con un deslizador y botón para escucharlo).
+3. Al crear la partida, activa la expansión **Mis canciones** (necesita al menos 4 canciones).
+
+Los archivos se guardan en `DATA_DIR/audio` y se sirven por token, sin revelar título ni archivo.
+Quedan marcados como **uso privado**: sirven para jugar con amigos, no para vender ni publicar el juego.
+
 ## Documentación
 
 1. [Producto y reglas](docs/01-producto-y-reglas.md)

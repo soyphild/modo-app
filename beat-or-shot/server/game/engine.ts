@@ -18,7 +18,7 @@ import type {
   TrackRoundView,
   WildcardType
 } from '../../shared/types';
-import type { CatalogRepository } from '../store/catalogCore';
+import { pickClipStart, type CatalogRepository } from '../store/catalogCore';
 import { matches, yearMatches } from './answers';
 import { HINT_ORDER, eraLabel, makeHint, pick, randomId, shuffle } from './helpers';
 
@@ -154,6 +154,8 @@ export interface AudioTokenRef {
   track: TrackDef;
   variant: Round['variant'];
   clipSec: number;
+  /** Segundo de inicio del fragmento (archivos de audio) */
+  clipStart: number;
 }
 
 export interface RoomDeps {
@@ -974,7 +976,7 @@ export class Room {
   private issueAudioToken(round: Round) {
     if (round.audioToken) this.deps.audioTokens.delete(round.audioToken);
     round.audioToken = randomId(16);
-    this.deps.audioTokens.set(round.audioToken, { roomCode: this.code, track: round.track, variant: round.variant, clipSec: round.clipSec });
+    this.deps.audioTokens.set(round.audioToken, { roomCode: this.code, track: round.track, variant: round.variant, clipSec: round.clipSec, clipStart: pickClipStart(round.track.audio, round.clipSec, this.rand) });
   }
 
   /** Aplica los buffs/debuffs que el jugador tenía guardados para su próxima canción. */

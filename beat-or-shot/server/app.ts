@@ -1,4 +1,5 @@
 import express, { type Response } from 'express';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { Server, Socket } from 'socket.io';
 import { z } from 'zod';
@@ -275,7 +276,7 @@ export function createApp(opts: AppOptions) {
     const payload: AudioPayload & { clipSec: number } =
       a.kind === 'synth'
         ? { kind: 'synth', variant: ref.variant, bpm: a.bpm, notes: a.notes, clipSec: ref.clipSec }
-        : { kind: 'file', variant: ref.variant, url: `/api/audio/${req.params.token}/file`, clipStart: a.clipStart, clipDuration: Math.min(a.clipDuration, ref.clipSec), clipSec: ref.clipSec };
+        : { kind: 'file', variant: ref.variant, url: `/api/audio/${req.params.token}/file`, clipStart: ref.clipStart, clipDuration: Math.min(a.clipDuration, ref.clipSec), clipSec: ref.clipSec };
     res.json(payload);
   });
   router.get('/audio/:token/file', async (req, res) => {
@@ -320,11 +321,11 @@ export function createApp(opts: AppOptions) {
     audio: z
       .union([
         z.object({ kind: z.literal('synth'), bpm: z.number().min(30).max(300), notes: z.array(z.tuple([z.string().max(4), z.number().min(0.05).max(16)])).max(400) }),
-        z.object({ kind: z.literal('file'), url: z.string().max(500).regex(/^(https:\/\/|local:)/, 'URL https o local:archivo'), clipStart: z.number().min(0).max(3600), clipDuration: z.number().min(1).max(60) })
+        z.object({ kind: z.literal('file'), url: z.string().max(500).regex(/^(https:\/\/|local:)/, 'URL https o local:archivo'), clipStart: z.number().min(0).max(3600), clipDuration: z.number().min(1).max(60), durationSec: z.number().min(1).max(7200).optional(), clipMode: z.enum(['fixed', 'hook', 'random']).optional() })
       ])
       .nullable(),
     rights: z.object({
-      status: z.enum(['public_domain_composition', 'licensed', 'pending_license']),
+      status: z.enum(['public_domain_composition', 'licensed', 'private_use', 'pending_license']),
       holder: z.string().max(200).optional(),
       licenseId: z.string().max(120).optional(),
       territory: z.string().max(120).optional(),
@@ -350,6 +351,18 @@ export function createApp(opts: AppOptions) {
     catalog.upsert(t);
     res.json({ ...t, playable: isPlayable(t) });
   };
+  // Subida de archivos de audio del propio dueño (uso privado o con licencia).
+  const AUDIO_TYPES: Record<string, string> = { 'audio/mpeg': 'mp3', 'audio/mp3': 'mp3', 'audio/mp4': 'm4a', 'audio/x-m4a': 'm4a', 'audio/aac': 'aac', 'audio/ogg': 'ogg', 'audio/wav': 'wav', 'audio/x-wav': 'wav', 'audio/webm': 'webm' };
+  admin.post('/upload', express.raw({ type: Object.keys(AUDIO_TYPES), limit: '40mb' }), async (req, res) => {
+    const ext = AUDIO_TYPES[(req.get('content-type') ?? '').split(';')[0].trim()];
+    if (!ext) return res.status(415).json({ error: 'Formato no admitido. Usa MP3, M4A, AAC, OGG, WAV o WEBM.' });
+    if (!Buffer.isBuffer(req.body) || req.body.length < 1000) return res.status(400).json({ error: 'Archivo vacío o dañado' });
+    const name = `${Date.now().toString(36)}-${roomCode().toLowerCase()}.${ext}`;
+    const dir = path.join(opts.dataDir, 'audio');
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(path.join(dir, name), req.body);
+    res.json({ url: `local:${name}`, bytes: req.body.length });
+  });
   admin.put('/tracks/:id', (req, res) => saveTrack({ ...req.body, id: req.params.id }, res, true));
   admin.post('/tracks', (req, res) => saveTrack(req.body, res, false));
   router.use('/admin', admin);

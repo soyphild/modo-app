@@ -109,6 +109,28 @@ describe('servidor en tiempo real', () => {
     expect(lic.status).toBe(400);
   });
 
+  it('sube una canción propia, la marca como uso privado y elige fragmentos al azar', async () => {
+    // WAV de 1 s en silencio
+    const n = 8000;
+    const wav = Buffer.alloc(44 + n);
+    wav.write('RIFF', 0); wav.writeUInt32LE(36 + n, 4); wav.write('WAVEfmt ', 8); wav.writeUInt32LE(16, 16); wav.writeUInt16LE(1, 20); wav.writeUInt16LE(1, 22);
+    wav.writeUInt32LE(8000, 24); wav.writeUInt32LE(8000, 28); wav.writeUInt16LE(1, 32); wav.writeUInt16LE(8, 34); wav.write('data', 36); wav.writeUInt32LE(n, 40);
+    const H = { 'x-admin-key': 'k' };
+    expect((await fetch(`${url}/api/admin/upload`, { method: 'POST', headers: { 'content-type': 'audio/wav' }, body: wav })).status).toBe(401);
+    expect((await fetch(`${url}/api/admin/upload`, { method: 'POST', headers: { ...H, 'content-type': 'text/plain' }, body: 'hola' })).status).toBe(415);
+    const up = await (await fetch(`${url}/api/admin/upload`, { method: 'POST', headers: { ...H, 'content-type': 'audio/wav' }, body: wav })).json();
+    expect(up.url).toMatch(/^local:[a-z0-9-]+\.wav$/);
+    const track = {
+      id: 'mis-prueba', title: 'Mi canción', artist: 'Yo', titleAliases: [], artistAliases: [], year: 2020, genre: 'Pop', country: 'Chile', difficulty: 2,
+      expansion: 'mis-canciones', explicit: false, spotifyUrl: null,
+      audio: { kind: 'file', url: up.url, clipStart: 0, clipDuration: 15, durationSec: 200, clipMode: 'random' },
+      rights: { status: 'private_use', note: 'privado' }, active: true
+    };
+    const res = await (await fetch(`${url}/api/admin/tracks`, { method: 'POST', headers: { ...H, 'content-type': 'application/json' }, body: JSON.stringify(track) })).json();
+    expect(res.playable).toBe(true);
+    expect(game.catalog.expansionViews().find((e) => e.id === 'mis-canciones')?.playableTracks).toBe(1);
+  });
+
   it('interpreta el contenido del QR', () => {
     expect(parseCardCode('https://beatorshot.app/c/ab12-cd34')).toBe('AB12-CD34');
     expect(parseCardCode('AB12CD34')).toBe('AB12-CD34');

@@ -15,12 +15,25 @@ export const SPOTIFY_TRACK_RE = /^https:\/\/open\.spotify\.com\/(intl-[a-z]{2}\/
 export function isPlayable(t: TrackDef, now = Date.now()): boolean {
   if (!t.active || !t.audio) return false;
   if (t.rights.status === 'public_domain_composition') return t.audio.kind === 'synth' || t.audio.kind === 'file';
+  if (t.rights.status === 'private_use') return t.audio.kind === 'file';
   if (t.rights.status === 'licensed') {
     if (!t.rights.holder || !t.rights.licenseId) return false;
     if (t.rights.expiresAt && Date.parse(t.rights.expiresAt) < now) return false;
     return true;
   }
   return false;
+}
+
+/**
+ * Elige el segundo de inicio del fragmento de un archivo de audio.
+ * random: evita los primeros 8 s (intros) y el final; hook/fixed: usa el segundo marcado.
+ */
+export function pickClipStart(audio: TrackDef['audio'], clipSec: number, rand: () => number = Math.random): number {
+  if (!audio || audio.kind !== 'file') return 0;
+  if (audio.clipMode !== 'random' || !audio.durationSec) return audio.clipStart;
+  const min = Math.min(8, Math.max(0, audio.durationSec - clipSec - 1));
+  const max = Math.max(min, audio.durationSec - clipSec - 5);
+  return Math.round((min + rand() * (max - min)) * 10) / 10;
 }
 
 /** Catálogo en memoria (sin dependencias de Node): base del servidor y de la demo en navegador. */

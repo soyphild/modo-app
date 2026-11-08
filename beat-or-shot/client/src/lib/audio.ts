@@ -161,15 +161,35 @@ export async function playRoundAudio(token: string, startAtLocalMs: number): Pro
   const clip = payload.clipSec;
 
   if (payload.kind === 'file' && payload.url) {
-    const el = new Audio(payload.url);
-    el.preload = 'auto';
-    fileEl = el;
-    el.currentTime = payload.clipStart ?? 0;
-    if (payload.variant === 'remix') el.playbackRate = 1.18;
-    setTimeout(() => {
-      if (fileEl === el) void el.play().catch(() => {});
-    }, delaySec * 1000);
-    stopTimer = setTimeout(() => stopMusic(), (delaySec + Math.min(clip, payload.clipDuration ?? clip)) * 1000);
+    // Se decodifica con WebAudio: arranca sincronizado y funciona en iPhone sin otro toque.
+    if (!musicBus) return false;
+    let buffer: AudioBuffer;
+    try {
+      const res = await fetch(payload.url, { cache: 'no-store' });
+      if (!res.ok) return false;
+      buffer = await c.decodeAudioData(await res.arrayBuffer());
+    } catch {
+      return false;
+    }
+    const start = Math.min(payload.clipStart ?? 0, Math.max(0, buffer.duration - 1));
+    const dur = Math.min(clip, payload.clipDuration ?? clip, buffer.duration - start);
+    const late = Math.max(0, (Date.now() - startAtLocalMs) / 1000);
+    const t0 = c.currentTime + Math.max(0, (startAtLocalMs - Date.now()) / 1000) + 0.05;
+    const src = c.createBufferSource();
+    src.buffer = buffer;
+    if (payload.variant === 'remix') {
+      src.playbackRate.value = 1.18;
+      src.detune.value = 300;
+    }
+    const g = c.createGain();
+    const playDur = Math.max(0.5, dur - late);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(1, t0 + 0.25);
+    g.gain.setValueAtTime(1, t0 + Math.max(0.3, playDur - 0.6));
+    g.gain.linearRampToValueAtTime(0.0001, t0 + playDur);
+    src.connect(g).connect(musicBus);
+    src.start(t0, start + late, playDur + 0.1);
+    activeNodes.push(src);
     return true;
   }
 

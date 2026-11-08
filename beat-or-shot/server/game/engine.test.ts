@@ -69,6 +69,25 @@ describe('validación de respuestas', () => {
   });
 });
 
+describe('fragmentos de archivos propios', () => {
+  it('al azar: dentro de la canción, evitando intro y final; estribillo: siempre el mismo', async () => {
+    const { pickClipStart, isPlayable } = await import('../store/catalogCore');
+    const audio = { kind: 'file' as const, url: 'local:x.mp3', clipStart: 62, clipDuration: 15, durationSec: 210, clipMode: 'random' as const };
+    const starts = new Set<number>();
+    for (let i = 0; i < 50; i++) {
+      const s = pickClipStart(audio, 12);
+      expect(s).toBeGreaterThanOrEqual(8);
+      expect(s + 12).toBeLessThanOrEqual(210 - 5);
+      starts.add(s);
+    }
+    expect(starts.size).toBeGreaterThan(10);
+    expect(pickClipStart({ ...audio, clipMode: 'hook' }, 12)).toBe(62);
+    const base = { id: 'x', title: 't', artist: 'a', titleAliases: [], artistAliases: [], year: 2000, genre: 'g', country: 'c', difficulty: 2 as const, expansion: 'mis-canciones', explicit: false, spotifyUrl: null, active: true };
+    expect(isPlayable({ ...base, audio, rights: { status: 'private_use', note: '' } })).toBe(true);
+    expect(isPlayable({ ...base, audio, rights: { status: 'pending_license', note: '' } })).toBe(false);
+  });
+});
+
 describe('motor de juego', () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => vi.useRealTimers());

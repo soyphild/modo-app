@@ -8,7 +8,8 @@
  *   desde el panel administrativo. El campo `spotifyUrl` es solo una referencia editorial.
  */
 
-export type RightsStatus = 'public_domain_composition' | 'licensed' | 'pending_license';
+/** private_use: canciones subidas por el dueño para jugar en privado. Nunca para vender. */
+export type RightsStatus = 'public_domain_composition' | 'licensed' | 'private_use' | 'pending_license';
 
 export interface TrackRights {
   status: RightsStatus;
@@ -21,7 +22,16 @@ export interface TrackRights {
 
 export type TrackAudio =
   | { kind: 'synth'; bpm: number; notes: [string, number][] }
-  | { kind: 'file'; url: string; clipStart: number; clipDuration: number };
+  | {
+      kind: 'file';
+      url: string;
+      clipStart: number;
+      clipDuration: number;
+      /** Duración total del archivo (s), para elegir fragmentos al azar */
+      durationSec?: number;
+      /** fixed: siempre clipStart · hook: desde el estribillo (clipStart) · random: un trozo distinto cada vez */
+      clipMode?: 'fixed' | 'hook' | 'random';
+    };
 
 export interface TrackDef {
   id: string;
@@ -209,6 +219,7 @@ export interface ExpansionDef {
 
 export const EXPANSIONS: ExpansionDef[] = [
   { id: 'demo-clasicos', name: 'Clásicos Universales', tagline: 'Edición demo jugable · composiciones de dominio público', color: '#00D9FF', status: 'owned', compatibleWith: 'all' },
+  { id: 'mis-canciones', name: 'Mis canciones', tagline: 'Canciones que subes tú al servidor · solo uso privado', color: '#19C86A', status: 'owned', compatibleWith: 'all' },
   { id: 'general', name: 'Edición General', tagline: 'Pop, rock, salsa, merengue, bachata, reguetón, electrónica y más', color: '#8B5CF6', status: 'owned', compatibleWith: 'all' },
   { id: 'electronic', name: 'Electronic Edition', tagline: 'House, techno, trance y los drops que hicieron historia', color: '#22D3EE', status: 'soon', compatibleWith: 'all' },
   { id: 'salsa', name: 'Salsa Edition', tagline: 'De la vieja guardia a la salsa romántica', color: '#FB923C', status: 'soon', compatibleWith: 'all' },
