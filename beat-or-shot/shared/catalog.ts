@@ -219,7 +219,7 @@ export interface ExpansionDef {
 
 export const EXPANSIONS: ExpansionDef[] = [
   { id: 'demo-clasicos', name: 'Clásicos Universales', tagline: 'Edición demo jugable · composiciones de dominio público', color: '#00D9FF', status: 'owned', compatibleWith: 'all' },
-  { id: 'mis-canciones', name: 'Mis canciones', tagline: 'Canciones que subes tú al servidor · solo uso privado', color: '#19C86A', status: 'owned', compatibleWith: 'all' },
+  { id: 'mis-canciones', name: 'Mis canciones', tagline: 'Las canciones que subes tú al servidor', color: '#19C86A', status: 'owned', compatibleWith: 'all' },
   { id: 'general', name: 'Edición General', tagline: 'Pop, rock, salsa, merengue, bachata, reguetón, electrónica y más', color: '#8B5CF6', status: 'owned', compatibleWith: 'all' },
   { id: 'electronic', name: 'Electronic Edition', tagline: 'House, techno, trance y los drops que hicieron historia', color: '#22D3EE', status: 'soon', compatibleWith: 'all' },
   { id: 'salsa', name: 'Salsa Edition', tagline: 'De la vieja guardia a la salsa romántica', color: '#FB923C', status: 'soon', compatibleWith: 'all' },

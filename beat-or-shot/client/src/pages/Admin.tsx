@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle2, Music, Play, Plus, Printer, Search, Square, Upload } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Play, Plus, Printer, Search, Square, Upload } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { TrackDef } from '../../../shared/catalog';
 import { Btn, Logo, Pill, Sheet, cx } from '../components/ui';
@@ -138,7 +138,7 @@ export default function AdminPage() {
                   <td className="p-3 text-xs">{r.genre} · {r.year}</td>
                   <td className="p-3">{r.difficulty}</td>
                   <td className="p-3 text-xs">{r.rights.status.replace(/_/g, ' ')}</td>
-                  <td className="p-3">{r.playable ? (r.rights.status === 'private_use' ? <Pill color="#00D9FF"><Music size={11} /> Uso privado</Pill> : <Pill color="#19C86A"><CheckCircle2 size={11} /> Jugable</Pill>) : <Pill color="#FFC247">Sin audio</Pill>}</td>
+                  <td className="p-3">{r.playable ? <Pill color="#19C86A"><CheckCircle2 size={11} /> Jugable</Pill> : <Pill color="#FFC247">Sin audio</Pill>}</td>
                 </tr>
               ))}
             </tbody>
@@ -280,7 +280,7 @@ function TrackForm({ initial, isNew, onSave }: { initial: TrackDef; isNew: boole
             <select className="w-full" value={t.rights.status} onChange={(e) => rights({ status: e.target.value as TrackDef['rights']['status'] })}>
               <option value="pending_license">Pendiente de licencia</option>
               <option value="licensed">Con licencia</option>
-              <option value="private_use">Uso privado (no vender)</option>
+              <option value="private_use">Subida por mí</option>
               <option value="public_domain_composition">Dominio público</option>
             </select>
           </Field>
@@ -389,7 +389,7 @@ function UploadForm({ adminKey, onDone }: { adminKey: string; onDone: () => void
       explicit: false,
       spotifyUrl: null,
       audio: { kind: 'file', url: upBody.url, clipStart: mode === 'hook' ? hook : 0, clipDuration: clipLen, durationSec: Math.round(duration), clipMode: mode },
-      rights: { status: 'private_use', note: 'Subida por el dueño para uso privado. No apta para venta ni distribución.' },
+      rights: { status: 'private_use', note: 'Subida desde el panel.' },
       active: true
     };
     const res = await fetch('/api/admin/tracks', { method: 'POST', headers: { 'content-type': 'application/json', 'x-admin-key': adminKey }, body: JSON.stringify(track) });
@@ -404,7 +404,7 @@ function UploadForm({ adminKey, onDone }: { adminKey: string; onDone: () => void
   return (
     <div className="space-y-3">
       <p className="rounded-xl bg-cyan/10 p-3 text-xs text-cyan">
-        Las canciones que subes quedan en <b>Mis canciones</b> y se marcan como <b>uso privado</b>: sirven para jugar con tus amigos, no para vender el juego.
+        Las canciones que subes quedan en <b>Mis canciones</b>. Actívala al crear la partida.
       </p>
       <label className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-white/15 p-5 text-center text-sm text-white/70">
         <Upload />
