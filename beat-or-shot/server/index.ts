@@ -20,7 +20,8 @@ const game = createApp({
   dataDir: process.env.DATA_DIR ?? path.join(ROOT, 'data'),
   cardSecret: process.env.CARD_SECRET ?? 'beat-or-shot-dev-secret',
   adminKey: process.env.ADMIN_KEY ?? 'admin',
-  publicUrl: process.env.PUBLIC_URL ?? null
+  // Render define RENDER_EXTERNAL_URL automáticamente (https://tu-app.onrender.com).
+  publicUrl: process.env.PUBLIC_URL ?? process.env.RENDER_EXTERNAL_URL ?? null
 });
 
 if (!process.env.CARD_SECRET) console.warn('[beat-or-shot] CARD_SECRET no definido: se usa el secreto de desarrollo.');

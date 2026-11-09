@@ -1,0 +1,26 @@
+# Despliegue de BEAT OR SHOT en Render (Blueprint).
+# Render → New → Blueprint → elige este repositorio y la rama del juego.
+# Plan "starter" + disco: las canciones subidas y la base de datos de canciones
+# se guardan en /var/data y sobreviven a reinicios y actualizaciones.
+services:
+  - type: web
+    name: beat-or-shot
+    runtime: node
+    plan: starter
+    rootDir: beat-or-shot
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    disk:
+      name: beat-or-shot-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATA_DIR
+        value: /var/data
+      - key: CARD_SECRET
+        generateValue: true
+      - key: ADMIN_KEY
+        sync: false
